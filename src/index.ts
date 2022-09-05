@@ -122,4 +122,5 @@ export const nav = async (): Promise<void> => {
       highlight: `CocSymbol${kindOrder[kind].charAt(0).toUpperCase()}${kindOrder[kind].slice(1)}`,
     }))
   );
+  workspace.nvim.call('coc#util#do_autocmd', ['CocNavChanged']);
 };
