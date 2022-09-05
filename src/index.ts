@@ -1,6 +1,7 @@
 import {
   CancellationTokenSource,
   DocumentSymbol,
+  DocumentSymbolProvider,
   ExtensionContext,
   languages,
   Position,
@@ -8,6 +9,10 @@ import {
   SymbolKind,
   workspace,
 } from 'coc.nvim';
+
+type DocumentSymbolProviders = ReadonlyArray<{
+  provider: DocumentSymbolProvider;
+}>;
 
 export async function activate(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(
@@ -89,7 +94,10 @@ export const nav = async (): Promise<void> => {
 
   // @ts-expect-error
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const { provider }: { provider: DocumentSymbolProvider } = Array.from(languages.documentSymbolManager.providers)[0];
+  const providers: DocumentSymbolProviders = Array.from(languages.documentSymbolManager.providers);
+
+  if (providers.length === 0) return;
+  const provider = providers[0].provider;
 
   const symbols = (
     (await provider.provideDocumentSymbols(document, tokenSource.token)) as ReadonlyArray<DocumentSymbol>
