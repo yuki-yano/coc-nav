@@ -91,10 +91,16 @@ const expandChildren = (symbol: DocumentSymbol): Array<DocumentSymbol> => {
 export const nav = async (): Promise<void> => {
   const { document, position } = await workspace.getCurrentState();
   const tokenSource = new CancellationTokenSource();
+  const bufnr = (await workspace.nvim.call('bufnr', ['%'])) as number;
+  const buffer = workspace.nvim.createBuffer(bufnr);
+  const filetype = (await buffer.getOption('filetype')) as string;
 
   // @ts-expect-error
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const providers: DocumentSymbolProviders = Array.from(languages.documentSymbolManager.providers);
+  const providers: DocumentSymbolProviders = Array.from(languages.documentSymbolManager.providers).filter((v) =>
+    // @ts-expect-error
+    v.selector.includes(filetype)
+  );
 
   if (providers.length === 0) return;
   const provider = providers[0].provider;
@@ -112,8 +118,6 @@ export const nav = async (): Promise<void> => {
     }
   }
 
-  const bufnr = (await workspace.nvim.call('bufnr', ['%'])) as number;
-  const buffer = workspace.nvim.createBuffer(bufnr);
   await buffer.setVar(
     'coc_nav',
     arr.map(({ name, kind, label }) => ({
