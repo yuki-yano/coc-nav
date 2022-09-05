@@ -114,7 +114,7 @@ export const nav = async (): Promise<void> => {
 
   const bufnr = (await workspace.nvim.call('bufnr', ['%'])) as number;
   const buffer = workspace.nvim.createBuffer(bufnr);
-  buffer.setVar(
+  await buffer.setVar(
     'coc_nav',
     arr.map(({ name, kind, label }) => ({
       name,
