@@ -99,9 +99,10 @@ export const nav = async (): Promise<void> => {
 
   // @ts-expect-error
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const providers: DocumentSymbolProviders = Array.from(languages.documentSymbolManager.providers).filter((v) =>
-    // @ts-expect-error
-    v.selector.includes(filetype)
+  const providers: DocumentSymbolProviders = Array.from(languages.documentSymbolManager.providers).filter(
+    (v) =>
+      // @ts-expect-error
+      v.selector.includes(filetype) || v.selector.flatMap((s) => s?.language).includes(filetype)
   );
 
   if (providers.length === 0) return;
