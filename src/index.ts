@@ -17,7 +17,7 @@ type DocumentSymbolProviders = ReadonlyArray<{
 export async function activate(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(
     workspace.registerAutocmd({
-      event: 'CursorHold',
+      event: 'CursorMoved',
       callback: () => {
         nav();
       },
